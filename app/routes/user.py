@@ -1,6 +1,6 @@
 from trycourier import Courier
 from dotenv import load_dotenv
-from app.models.user import User, TokenSchema, UserUpdate
+from app.models.user import User, TokenSchema
 from fastapi import APIRouter, status, HTTPException, Depends
 from fastapi.encoders import jsonable_encoder
 import os
