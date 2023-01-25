@@ -7,6 +7,7 @@ from app.routes.file import file
 origins = [
     "http://localhost:3000",
     "http://localhost:8080",
+    "https://unify-amber.vercel.app"
 ]
 
 app = FastAPI()
