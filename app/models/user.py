@@ -10,7 +10,7 @@ class User(BaseModel):
     email: str = Field(...)
     password: str = Field(...)
     subscribed: list = Field(...)
-    hoisted: list = Field(...)
+    organized: list = Field(...)
 
     class Config:
         schema_extra = {
@@ -21,7 +21,7 @@ class User(BaseModel):
                 "password": "",
                 "userId": "johndoe",
                 "subscribed": [],
-                "hoisted": []
+                "organized": []
             }
         }
 

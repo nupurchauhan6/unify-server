@@ -2,6 +2,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from app.routes.event import event
 from app.routes.user import user
+from app.routes.file import file
 
 origins = [
     "http://localhost:3000",
@@ -20,6 +21,7 @@ app.add_middleware(
 
 app.include_router(user)
 app.include_router(event)
+app.include_router(file)
 
 
 @app.get("/", tags=["root"])

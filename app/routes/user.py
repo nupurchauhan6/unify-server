@@ -1,5 +1,6 @@
+from trycourier import Courier
 from dotenv import load_dotenv
-from app.models.user import User, TokenSchema
+from app.models.user import User, TokenSchema, UserUpdate
 from fastapi import APIRouter, status, HTTPException, Depends
 from fastapi.encoders import jsonable_encoder
 import os
@@ -10,8 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 load_dotenv()
 
-from trycourier import Courier
-courier_client = Courier(os.environ.get('COURIER_SECRET_KEY'))
+courier_client = Courier(auth_token=os.environ.get('COURIER_SECRET_KEY'))
 
 client = AsyncIOMotorClient(os.environ.get("MONGODB_URL"))
 db = client.unify
@@ -34,7 +34,7 @@ async def create_user(user: User):
     new_user = await db["users"].insert_one(user)
     created_user = await db["users"].find_one({"_id": new_user.inserted_id})
 
-    resp = courier_client.send_message(
+    courier_client.send_message(
         message={
             "to": {
                 "email": created_user['email'],
