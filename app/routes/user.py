@@ -70,3 +70,10 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "access_token": create_access_token(user),
         "refresh_token": create_refresh_token(user),
     }
+    
+@user.get('/organize/{eventId}/{userId}')
+async def organize_event(eventId: str, userId: str):
+    user = await db["users"].find_one({"_id": userId})
+    user['organized'].append(eventId)
+    await db["users"].update_one({"_id": userId}, {"$set": user})
+    return await db["users"].find_one({"_id": userId})
