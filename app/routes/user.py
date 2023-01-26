@@ -77,3 +77,13 @@ async def organize_event(eventId: str, userId: str):
     user['organized'].append(eventId)
     await db["users"].update_one({"_id": userId}, {"$set": user})
     return await db["users"].find_one({"_id": userId})
+
+@user.get('/subscribe/{eventId}/{userId}')
+async def subscribe_event(eventId: str, userId: str):
+    user = await db["users"].find_one({"_id": userId})
+    if eventId in user['subscribed']:
+        return "Already subscribed!"
+    
+    user['subscribed'].append(eventId)
+    await db["users"].update_one({"_id": userId}, {"$set": user})
+    return await db["users"].find_one({"_id": userId})
