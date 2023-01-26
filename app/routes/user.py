@@ -70,7 +70,8 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "access_token": create_access_token(user),
         "refresh_token": create_refresh_token(user),
     }
-    
+
+
 @user.get('/organize/{eventId}/{userId}')
 async def organize_event(eventId: str, userId: str):
     user = await db["users"].find_one({"_id": userId})
@@ -78,12 +79,31 @@ async def organize_event(eventId: str, userId: str):
     await db["users"].update_one({"_id": userId}, {"$set": user})
     return await db["users"].find_one({"_id": userId})
 
+
 @user.get('/subscribe/{eventId}/{userId}')
 async def subscribe_event(eventId: str, userId: str):
     user = await db["users"].find_one({"_id": userId})
     if eventId in user['subscribed']:
         return "Already subscribed!"
-    
+
     user['subscribed'].append(eventId)
     await db["users"].update_one({"_id": userId}, {"$set": user})
+
+    event = await db["events"].find_one({"_id": eventId})
+    courier_client.send_message(
+        message={
+            "to": {
+                "email": user['email'],
+            },
+            "template": "Y8SNECJN3WMZ43MEMC99EWRNQ3W2",
+            "data": {
+                "firstName": user['firstName'],
+                "eventName": event['title'],
+                "meetingLink": event['meetingLink'],
+                "startTime": event['startTime'],
+                "endTime": event['endTime'],
+                "meetingDetails": event['meetingDetails'],
+            },
+        }
+    )
     return await db["users"].find_one({"_id": userId})
